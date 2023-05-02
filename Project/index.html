@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="https://d3js.org/d3.v7.js"></script>
+
+<button onclick="update(data1)">Peak All-Time Players</button>
+<button onclick="update(data2)">Peak Players Last 30 Days </button>
+<div id="playerdata"></div>
+
+<script>
+
+var data1 = [
+   {group: "PUBG", value: 3236027},
+   {group: "CS:GO", value: 1519457},
+   {group: "Lost Ark", value: 1324761},
+   {group: "Dota 2", value: 1291328},
+   {group: "ELDEN RING", value: 952523},
+   {group: "New World", value: 913027},
+   {group: "Cyberpunk 2077", value: 830387},
+   {group: "Goose Goose Duck", value: 701898},
+   {group: "Apex Legends", value: 624473},
+   {group: "Hogwarts Legacy", value: 527652}
+];
+
+var data2 = [
+   {group: "PUBG", value: 459344},
+   {group: "CS:GO", value: 1519457},
+   {group: "Lost Ark", value: 127356},
+   {group: "Dota 2", value: 689255},
+   {group: "ELDEN RING", value: 65678},
+   {group: "New World", value: 28227},
+   {group: "Cyberpunk 2077", value: 26135},
+   {group: "Goose Goose Duck", value: 145020},
+   {group: "Apex Legends", value: 572373},
+   {group: "Hogwarts Legacy", value: 98833}
+];
+
+var margin = {top: 30, right: 30, bottom: 70, left: 60},
+    width = "1024" - margin.left - margin.right,
+    height = "576" - margin.top - margin.bottom;
+
+var svg = d3.select("#playerdata")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+var x = d3.scaleBand()
+  .range([ 0, width ])
+  .domain(data1.map(function(d) { return d.group; }))
+  .padding(.1);
+svg.append("g")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(x))
+
+var y = d3.scaleLinear()
+  .domain([0, 3500000])
+  .range([ height, 0]);
+svg.append("g")
+  .attr("class", "myYaxis")
+  .call(d3.axisLeft(y));
+
+function update(data) {
+
+  var z = svg.selectAll("rect")
+    .data(data)
+
+  z
+    .enter()
+    .append("rect")
+    .merge(z)
+    .transition()
+    .duration(1000)
+      .attr("x", function(d) { return x(d.group); })
+      .attr("y", function(d) { return y(d.value); })
+      .attr("width", x.bandwidth())
+      .attr("height", function(d) { return height - y(d.value); })
+      .attr("fill", "#4c8bf5")
+}
+
+update(data1)
+
+</script>
